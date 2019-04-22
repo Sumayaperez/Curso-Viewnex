@@ -13,35 +13,42 @@ import java.util.ArrayList;
  */
 public class ServicioUsuarios {
     //Implementando Singleton 
-    
-    private static ServicioUsuarios instancia =null;
+
+    private static ServicioUsuarios instancia = null;
+
     //Nadie puede hacer new salgo esta misma clase
-    private ServicioUsuarios(){
-        listaUsuarios =new ArrayList<>();
+    private ServicioUsuarios() {
+        // listaUsuarios = new ArrayList<>();
+        DerbyDBUsuario bdUsu = new DerbyDBUsuario();
+        this.listaUsuarios = bdUsu.listar();
     }
+
     //Única manera de devolver un objeto en esta clase
     public static ServicioUsuarios getInstanciia() {
-        if (instancia == null)
+        if (instancia == null) {
             instancia = new ServicioUsuarios();
+        }
         return instancia;
     }
-    
-    
+
     private final ArrayList<Usuario> listaUsuarios;
-    
-   
-    public boolean addUsuario(String nom, int edad, String email,String password){
+
+    public boolean addUsuario(String nom, int edad, String email, String password) {
         Usuario nuevoUsu = new Usuario(nom, password, edad, email);
         this.listaUsuarios.add(nuevoUsu);
         return true;
     }
-    public boolean validacionPasswd(String email, String passwd){
-        if (listaUsuarios.stream().anyMatch((usu) -> (usu.getEmail().equals(email) && usu.getPassword().equals(passwd)))) {
-            return true;
+
+    public boolean validacionPasswd(String email, String passwd) {
+        for (Usuario usu : listaUsuarios) {
+            if (usu.getEmail().equals(email) && usu.getPassword().equals(passwd)) {
+                return true;
+            }
         }
         return false;
     }
-    public int cantidadUsuarios(){
+
+    public int cantidadUsuarios() {
         return listaUsuarios.size();
     }
 }
