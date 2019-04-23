@@ -6,6 +6,7 @@
 package com.modelo;
 
 import com.modelo.Usuario;
+import static java.lang.System.out;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,62 +21,98 @@ import java.util.logging.Logger;
  * @author Default
  */
 public class DerbyDBUsuario {
-    
-    public DerbyDBUsuario(){
+
+    private DerbyDBUsuario bdUsu;
+    private ArrayList<DerbyDBUsuario> listaDBUsuarios;
+
+    public DerbyDBUsuario() {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
         } catch (Exception ex) {
             Logger.getLogger(DerbyDBUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } 
-    public ArrayList<Usuario> listar(){
-        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador","1234" )){
-            
-        ArrayList<Usuario> listaUsu = new ArrayList<>();
-        String consultaSQL = "SELECT id, nombre, edad, email, password FROM Usuario";
-        Statement sentencia = con.createStatement();
-        ResultSet res = sentencia.executeQuery(consultaSQL);
-        while (res.next()) {
-            int id = res.getInt("id");
-            String nombre =res.getString("nombre");
-            String email = res.getString("email");
-            String password = res.getString("password");
-            int edad = res.getInt("edad");
-            Usuario usu = new Usuario(nombre, password, edad, email);
-            listaUsu.add(usu);
-        }
-        return listaUsu;
-        }catch (SQLException ex) {
+    }
+
+    public ArrayList<Usuario> listar() {
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
+
+            ArrayList<Usuario> listaUsu = new ArrayList<>();
+            String consultaSQL = "SELECT id, nombre, edad, email, password FROM Usuario";
+            Statement sentencia = con.createStatement();
+            ResultSet res = sentencia.executeQuery(consultaSQL);
+            while (res.next()) {
+                int id = res.getInt("id");
+                String nombre = res.getString("nombre");
+                String email = res.getString("email");
+                String password = res.getString("password");
+                int edad = res.getInt("edad");
+                Usuario usu = new Usuario(nombre, password, edad, email);
+                listaUsu.add(usu);
+            }
+            return listaUsu;
+        } catch (SQLException ex) {
             System.err.println(" >>> " + ex.getMessage());
             return null;
         }
-        
-    } 
-    public boolean crear(Usuario persona){
-         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador","1234" )){
-            String sqlID ="SELECT COUNT(id) AS ultId FROM Usuario";
-            Statement sentencia =con.createStatement();
-            ResultSet res =sentencia.executeQuery(sqlID);
-            if (res.next()){
+
+    }
+
+    public boolean crear(Usuario persona) {
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
+            String sqlID = "SELECT COUNT(id) AS ultId FROM Usuario";
+            Statement sentencia = con.createStatement();
+            ResultSet res = sentencia.executeQuery(sqlID);
+            if (res.next()) {
                 int ultId = res.getInt("ultId");
-                ultId ++;
-                String sqlInsert = "INSERT INTO usuario (id, nombre, edad, email, password) VALUES (" + ultId + ", '" + persona.getNombre() + "', "
-                        + persona.getEdad() + " , '" + persona.getEmail() + "' , '" + persona.getPassword() + "' , ' )";
-                
+                ultId++;
+                String sqlInsert = "INSERT INTO usuario (id, nombre, edad, email, password) VALUES ("
+                        + ultId + ", '"
+                        + persona.getNombre() + "', "
+                        + persona.getEdad() + " , '"
+                        + persona.getEmail() + "' , '"
+                        + persona.getPassword() + "' )";
+
                 System.err.println(" >>> " + sqlInsert);
                 sentencia = con.createStatement();
                 sentencia.executeUpdate(sqlInsert);
                 return true;
-                
+
             }
-                    
+
             return false;
-             
-     }catch (SQLException ex) {
+
+        } catch (SQLException ex) {
             System.err.println(" >>> " + ex.getMessage());
-        } 
+        }
         return false;
     }
-}
 
+    public boolean listarUsuarios() {
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
+
+            ArrayList<Usuario> listaUsu = new ArrayList<>();
+            String consultaSQL = "SELECT id, nombre, edad, email, password FROM Usuario";
+            Statement sentencia = con.createStatement();
+            ResultSet res = sentencia.executeQuery(consultaSQL);
+            while (res.next()) {
+                int id = res.getInt("id");
+                String nombre = res.getString("nombre");
+                String email = res.getString("email");
+                String password = res.getString("password");
+                int edad = res.getInt("edad");
+                Usuario usu = new Usuario(nombre, password, edad, email);
+                listaUsu.add(usu);
+                out.println("<p>Nombre: " + nombre
+                        + "<br>Email: " + email
+                        + "<br>Edad: " + edad + "</p>");
+            }
+
+        } catch (SQLException ex) {
+            System.err.println(" >>> " + ex.getMessage());
+            return false;
+        }
+    return true;
+    }
+        
+}

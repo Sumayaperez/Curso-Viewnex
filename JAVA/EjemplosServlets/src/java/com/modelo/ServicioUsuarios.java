@@ -5,6 +5,7 @@
  */
 package com.modelo;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
 
 /**
@@ -19,8 +20,9 @@ public class ServicioUsuarios {
     //Nadie puede hacer new salgo esta misma clase
     private ServicioUsuarios() {
         // listaUsuarios = new ArrayList<>();
-        DerbyDBUsuario bdUsu = new DerbyDBUsuario();
+        this.bdUsu = new DerbyDBUsuario();
         this.listaUsuarios = bdUsu.listar();
+        listaDBUsuarios = new ArrayList<>();
     }
 
     //Única manera de devolver un objeto en esta clase
@@ -31,11 +33,14 @@ public class ServicioUsuarios {
         return instancia;
     }
 
+    private final DerbyDBUsuario bdUsu;
+    private final ArrayList<DerbyDBUsuario> listaDBUsuarios;
     private final ArrayList<Usuario> listaUsuarios;
 
     public boolean addUsuario(String nom, int edad, String email, String password) {
         Usuario nuevoUsu = new Usuario(nom, password, edad, email);
         this.listaUsuarios.add(nuevoUsu);
+        this.bdUsu.crear(nuevoUsu);
         return true;
     }
 
@@ -47,7 +52,7 @@ public class ServicioUsuarios {
         }
         return false;
     }
-
+    
     public int cantidadUsuarios() {
         return listaUsuarios.size();
     }
