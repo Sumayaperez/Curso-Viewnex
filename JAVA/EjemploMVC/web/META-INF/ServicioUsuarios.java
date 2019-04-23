@@ -38,21 +38,10 @@ public class ServicioUsuarios {
     private final ArrayList<Usuario> listaUsuarios;
 
     public boolean addUsuario(String nom, int edad, String email, String password) {
-        try {
-            if (nom.equals("") || email.equals("") || password.equals("")) {
-                return false;
-
-            } else {
-                Usuario nuevoUsu = new Usuario(nom, password, edad, email);
-
-                this.listaUsuarios.add(nuevoUsu);
-                this.bdUsu.crear(nuevoUsu);
-                return true;
-            }
-        } catch (Exception ex) {
-            System.err.println(" >> Error: No se ha podido crear el usuario" + ex.getMessage());
-            return false;
-        }
+        Usuario nuevoUsu = new Usuario(nom, password, edad, email);
+        this.listaUsuarios.add(nuevoUsu);
+        this.bdUsu.crear(nuevoUsu);
+        return true;
     }
 
     public boolean validacionPasswd(String email, String passwd) {
@@ -63,18 +52,19 @@ public class ServicioUsuarios {
         }
         return false;
     }
-
-    public ArrayList<Usuario> listarUsuarios() {
+    
+     public ArrayList<Usuario> listarUsuarios() {
         //Usuario nuevoUsu = new Usuario(nom, password, edad, email);
         return this.bdUsu.listar();
     }
-
+    
+    
     public int cantidadUsuarios() {
         return listaUsuarios.size();
     }
-
+    
     public ArrayList<Usuario> listar() {
         return this.listaUsuarios;
     }
-
+    
 }

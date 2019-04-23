@@ -37,13 +37,13 @@ public class ServicioUsuarios {
     private final ArrayList<DerbyDBUsuario> listaDBUsuarios;
     private final ArrayList<Usuario> listaUsuarios;
 
-    public boolean addUsuario(String nom, int edad, String email, String password) {
+    public boolean addUsuario(String nom, String edad, String email, String password) {
         try {
             if (nom.equals("") || email.equals("") || password.equals("")) {
                 return false;
 
             } else {
-                Usuario nuevoUsu = new Usuario(nom, password, edad, email);
+                Usuario nuevoUsu = new Usuario(nom, edad, email, password);
 
                 this.listaUsuarios.add(nuevoUsu);
                 this.bdUsu.crear(nuevoUsu);
