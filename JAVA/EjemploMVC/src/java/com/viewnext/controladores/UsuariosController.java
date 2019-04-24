@@ -52,8 +52,9 @@ public class UsuariosController extends HttpServlet {
                     break;
             }
 
+        } catch (Exception ex){
+            System.out.println(">>>> Error Usuario.do" + ex.getMessage());
         }
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

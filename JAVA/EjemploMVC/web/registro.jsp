@@ -17,9 +17,9 @@
                 <tr><td>Email: </td><td>
                         <input type="email" name="email" size="25" value="emailmvc@valido.com" required="required"/> </td></tr>
                 <tr><td>Password: </td><td>
-                        <input type="password" name="pass" size="25" value="1q2w3e" required="required"/> </td></tr>
+                        <input type="password" name="passwd" id="passwd" size="25" value="1q2w3e" required="required"/> </td></tr>
             </table>
-           
+            <input type="hidden" name="accion" value="registro">
             <br><input type="submit" value="Enviar"/>
         </form>
     </body>
