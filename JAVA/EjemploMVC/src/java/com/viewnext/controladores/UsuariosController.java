@@ -21,24 +21,39 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "UsuariosController", urlPatterns = {"/usuarios.do"})
 public class UsuariosController extends HttpServlet {
 
-    
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+
+            String accion = request.getParameter("accion");
             String nom = request.getParameter("nom");
             String email = request.getParameter("email");
             String edad = request.getParameter("edad");
             String passwd = request.getParameter("passwd");
-        
-            boolean realizado = ServicioUsuarios.getInstanciia().addUsuario(nom, edad, email, passwd);
-            if (realizado) {
-                out.println("<h3>Resgistrado correctamente</h3>");
-            }else {
-                out.println("<h3>No se ha resgistrado</h3>");
+
+            switch (accion) {
+                case "login":
+
+                    if (ServicioUsuarios.getInstanciia().validacionPasswd(email, passwd)) {
+                        out.println("<h3>login correcto</h3>");
+                    } else {
+                        out.println("<h3>Login incorrecto</h3>");
+                    }
+                break;
+                
+                case "registro":
+                    boolean realizado = ServicioUsuarios.getInstanciia().addUsuario(nom, edad, email, passwd);
+                    if (realizado) {
+                        out.println("<h3>Registrado correctamente</h3>");
+                    } else {
+                        out.println("<h3>No se ha registrado</h3>");
+                    }
+                    break;
             }
+
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

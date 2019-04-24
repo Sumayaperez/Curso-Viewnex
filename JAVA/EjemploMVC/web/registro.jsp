@@ -19,6 +19,7 @@
                 <tr><td>Password: </td><td>
                         <input type="password" name="pass" size="25" value="1q2w3e" required="required"/> </td></tr>
             </table>
+           
             <br><input type="submit" value="Enviar"/>
         </form>
     </body>
