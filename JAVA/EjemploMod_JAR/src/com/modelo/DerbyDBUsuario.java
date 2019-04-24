@@ -9,6 +9,7 @@ import com.modelo.Usuario;
 import static java.lang.System.out;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,10 +45,11 @@ public class DerbyDBUsuario {
             while (res.next()) {
                 int id = res.getInt("id");
                 String nombre = res.getString("nombre");
+                int edad = res.getInt("edad");
                 String email = res.getString("email");
                 String password = res.getString("password");
-                int edad = res.getInt("edad");
-                Usuario usu = new Usuario(nombre, password, edad, email);
+
+                Usuario usu = new Usuario(id, nombre, edad, email, password);
                 listaUsu.add(usu);
             }
             return listaUsu;
@@ -59,55 +61,57 @@ public class DerbyDBUsuario {
     }
 
     public boolean crear(Usuario persona) {
-        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
-            String sqlID = "SELECT COUNT(id) AS ultId FROM Usuario";
+        try (Connection con = DriverManager.getConnection(Constantes.CONNEX_DB, Constantes.USUARIO_DB, Constantes.PASSWORD_DB)) {
+           
             Statement sentencia = con.createStatement();
-            ResultSet res = sentencia.executeQuery(sqlID);
-            if (res.next()) {
-                int ultId = res.getInt("ultId");
-                ultId++;
-                String sqlInsert = "INSERT INTO usuario (id, nombre, edad, email, password) VALUES ("
-                        + ultId + ", '"
-                        + persona.getNombre() + "', "
-                        + persona.getEdad() + " , '"
-                        + persona.getEmail() + "' , '"
-                        + persona.getPassword() + "' )";
-
-                System.err.println(" >>> " + sqlInsert);
-                sentencia = con.createStatement();
-                sentencia.executeUpdate(sqlInsert);
-                return true;
-
-            }
-
-            return false;
-
+            String querySQL = "INSERT INTO USUARIO (NOMBRE, EDAD, EMAIL, PASSWORD"
+                    + "VALUES (?, ?, ?, ?)";
+            PreparedStatement st = con.prepareStatement(querySQL);
+            st.setString (1, persona.getNombre());
+            st.setInt(2, persona.getEdad());
+            st.setString(3, persona.getEmail());
+            st.setString(4, persona.getPassword());
+            st.executeUpdate();
+          return true;
         } catch (SQLException ex) {
             System.err.println(" >>> " + ex.getMessage());
         }
         return false;
     }
+    
+    public boolean modificar(Usuario persona) {
 
-    public boolean listarUsuarios() {
+        try (Connection con = DriverManager.getConnection(Constantes.CONNEX_DB, Constantes.USUARIO_DB, Constantes.PASSWORD_DB)) {
 
-        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
+           String querySQL = "UPDATE SET NOMBRE=?, EDAD=?, EMAIL=?, PASSWORD=? WHERE id=?";
+            PreparedStatement st = con.prepareStatement(querySQL);
+            st.setString (1, persona.getNombre());
+            st.setInt(2, persona.getEdad());
+            st.setString(3, persona.getEmail());
+            st.setString(4, persona.getPassword());
+            st.setInt(5, persona.getId());
 
-            ArrayList<Usuario> listaUsu;
-            listaUsu = new ArrayList<>();
-            String consultaSQL = "SELECT id, nombre, edad, email, password FROM Usuario";
-            Statement sentencia = con.createStatement();
-            ResultSet res = sentencia.executeQuery(consultaSQL);
-            while (res.next()) {
-                int id = res.getInt("id");
-                String nombre = res.getString("nombre");
-                String email = res.getString("email");
-                int edad = res.getInt("edad");
-            }
-
+            st.executeUpdate();
+          return true;      
         } catch (SQLException ex) {
             System.err.println(" >>> " + ex.getMessage());
             return false;
         }
-        return true;
     }
+
+    public boolean eliminar(int id) {
+
+        try (Connection con = DriverManager.getConnection(Constantes.CONNEX_DB, Constantes.USUARIO_DB, Constantes.PASSWORD_DB)) {
+
+           String querySQL = "DELETE FROM USUARIO WHERE id=? ";
+            PreparedStatement st = con.prepareStatement(querySQL);
+            st.setInt(1, id);
+            st.executeUpdate();
+          return true;      
+        } catch (SQLException ex) {
+            System.err.println(" >>> " + ex.getMessage());
+            return false;
+        }
+    }
+
 }
