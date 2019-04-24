@@ -35,6 +35,32 @@ public class DerbyDBUsuario {
         }
     }
 
+    public Usuario obtenerUno(String email){
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
+            String consultaSQL = "SELECT id, nombre, edad, email, password FROM Usuario WHERE email= '" + email +"'";
+            Statement sentencia = con.createStatement();
+            //sentencia.setString(1, email);
+            ResultSet res = sentencia.executeQuery(consultaSQL);
+            Usuario usu =null;
+            if (res.next()){
+                Integer id = res.getInt("id");
+                String nom = res.getString("nombre");
+                Integer edad = res.getInt("edad");
+                String password = res.getString("password");
+                
+                usu = new Usuario(id, nom, edad, email, password);
+                
+             
+            }
+            return usu;
+            
+        } catch (SQLException ex) {
+            System.err.println(" >>> " + ex.getMessage());
+            return null;
+        }
+        
+    }
+    
     public ArrayList<Usuario> listar() {
         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsuariosVNext", "administrador", "1234")) {
 
@@ -63,9 +89,8 @@ public class DerbyDBUsuario {
     public boolean crear(Usuario persona) {
         try (Connection con = DriverManager.getConnection(Constantes.CONNEX_DB, Constantes.USUARIO_DB, Constantes.PASSWORD_DB)) {
            
-            Statement sentencia = con.createStatement();
-            String querySQL = "INSERT INTO USUARIO (NOMBRE, EDAD, EMAIL, PASSWORD"
-                    + "VALUES (?, ?, ?, ?)";
+            //Statement sentencia = con.createStatement();
+            String querySQL = "INSERT INTO USUARIO (NOMBRE, EDAD, EMAIL, PASSWORD) VALUES (?, ?, ?, ?)";
             PreparedStatement st = con.prepareStatement(querySQL);
             st.setString (1, persona.getNombre());
             st.setInt(2, persona.getEdad());

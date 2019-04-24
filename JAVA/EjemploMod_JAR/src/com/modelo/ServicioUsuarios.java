@@ -56,6 +56,11 @@ public class ServicioUsuarios {
         }
     }
 
+    public Usuario obtenerUno(String email){
+        return this.bdUsu.obtenerUno(email);    
+    }
+    
+    
     public boolean modificarUsuario(String id, String nom, String edad, String email, String password ) {
         try {
             if (id.equals("") || nom.equals("") || email.equals("") || password.equals("")) {

@@ -6,6 +6,7 @@
 package com.viewnext.controladores;
 
 import com.modelo.ServicioUsuarios;
+import com.modelo.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -27,27 +29,34 @@ public class UsuariosController extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             String accion = request.getParameter("accion");
-            String nom = request.getParameter("nom");
-            String email = request.getParameter("email");
+            String nombre = request.getParameter("nombre");
             String edad = request.getParameter("edad");
-            String passwd = request.getParameter("passwd");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
 
             switch (accion) {
                 case "login":
 
-                    if (ServicioUsuarios.getInstanciia().validacionPasswd(email, passwd)) {
-                        out.println("<h3>login correcto</h3>");
+                    if (ServicioUsuarios.getInstanciia().validacionPasswd(email, password)) {
+                        //out.println("<h3>* * * Login correcto* * * </h3>");
+                        //creacion de la sesión
+                        HttpSession sesion = request.getSession();
+                        Usuario usu = ServicioUsuarios.getInstanciia().obtenerUno(email);
+                        
+                        sesion.setAttribute("usuario",usu);
+                        request.getRequestDispatcher("index.jsp").forward(request, response);
+                        
                     } else {
-                        out.println("<h3>Login incorrecto</h3>");
+                        out.println("<h3>* * * Login incorrecto* * * </h3>");
                     }
                 break;
                 
                 case "registro":
-                    boolean realizado = ServicioUsuarios.getInstanciia().addUsuario(nom, edad, email, passwd);
+                    boolean realizado = ServicioUsuarios.getInstanciia().addUsuario(nombre, edad, email, password);
                     if (realizado) {
-                        out.println("<h3>Registrado correctamente</h3>");
+                        out.println("<h3>* * * Registrado correctamente* * * </h3>");
                     } else {
-                        out.println("<h3>No se ha registrado</h3>");
+                        out.println("<h3>* * * No se ha registrado* * * </h3>");
                     }
                     break;
             }
