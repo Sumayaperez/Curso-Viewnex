@@ -29,6 +29,7 @@ public class UsuariosController extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             String accion = request.getParameter("accion");
+            String id = request.getParameter("id");
             String nombre = request.getParameter("nombre");
             String edad = request.getParameter("edad");
             String email = request.getParameter("email");
@@ -44,12 +45,13 @@ public class UsuariosController extends HttpServlet {
                         Usuario usu = ServicioUsuarios.getInstanciia().obtenerUno(email);
                         
                         sesion.setAttribute("usuario",usu);
-                        request.getRequestDispatcher("index.jsp").forward(request, response);
                         
                     } else {
-                        out.println("<h3>* * * Login incorrecto* * * </h3>");
+                        System.out.println("<h3>* * * Login incorrecto* * * </h3>");
+                        request.getSession().setAttribute("msj_error","login incorrecto");
                     }
-                break;
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
+                    break;
                 
                 case "registro":
                     boolean realizado = ServicioUsuarios.getInstanciia().addUsuario(nombre, edad, email, password);
@@ -58,6 +60,10 @@ public class UsuariosController extends HttpServlet {
                     } else {
                         out.println("<h3>* * * No se ha registrado* * * </h3>");
                     }
+                    break;
+                case "PUT":
+                    ServicioUsuarios.getInstanciia().modificarUsuario(id, nombre, edad, email, password);
+                    request.getRequestDispatcher("listar.jsp").forward(request,response);
                     break;
             }
 
